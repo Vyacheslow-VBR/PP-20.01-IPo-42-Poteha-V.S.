@@ -1,0 +1,157 @@
+﻿<Window x:Class="PotehaApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Учет партнеров - Poteha" 
+        Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Background="#F5F5F5">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Меню в строгом стиле -->
+        <Menu Grid.Row="0" Background="#2C3E50" Foreground="White" Height="30">
+            <MenuItem Header="_Файл" Foreground="White" Background="#2C3E50">
+                <MenuItem Header="_Открыть" Click="OpenMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="_Импорт" Click="ImportMenuItem_Click" Foreground="#2C3E50"/>
+                <Separator/>
+                <MenuItem Header="_Сохранить" Click="SaveMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="Сохранить _как" Foreground="#2C3E50">
+                    <MenuItem Header="В _TXT" Click="SaveAsTxtMenuItem_Click" Foreground="#2C3E50"/>
+                    <MenuItem Header="В _Excel (CSV)" Click="SaveAsExcelMenuItem_Click" Foreground="#2C3E50"/>
+                    <MenuItem Header="В _JSON" Click="SaveAsJsonMenuItem_Click" Foreground="#2C3E50"/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="_Выход" Click="ExitMenuItem_Click" Foreground="#2C3E50"/>
+            </MenuItem>
+            <MenuItem Header="_Партнеры" Foreground="White" Background="#2C3E50">
+                <MenuItem Header="_Добавить партнера" Click="AddPartnerMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="_Редактировать партнера" Click="EditPartnerMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="_Удалить партнера" Click="DeletePartnerMenuItem_Click" Foreground="#2C3E50"/>
+            </MenuItem>
+            <MenuItem Header="_Продажи" Foreground="White" Background="#2C3E50">
+                <MenuItem Header="_Добавить продажу" Click="AddSaleMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="_Редактировать продажу" Click="EditSaleMenuItem_Click" Foreground="#2C3E50"/>
+                <MenuItem Header="_Удалить продажу" Click="DeleteSaleMenuItem_Click" Foreground="#2C3E50"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Основная область -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая панель - список партнеров (темно-синий стиль) -->
+            <Border Grid.Column="0" BorderBrush="#34495E" BorderThickness="1" CornerRadius="5" Background="White">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#34495E" CornerRadius="5,5,0,0" Padding="5">
+                        <TextBlock Text="ПАРТНЕРЫ" FontWeight="Bold" FontSize="14" 
+                                   HorizontalAlignment="Center" Foreground="White"/>
+                    </Border>
+                    <ListBox x:Name="PartnersListBox" SelectionMode="Single" 
+                             SelectionChanged="PartnersListBox_SelectionChanged"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             Background="White" BorderThickness="0" Margin="0,0,0,0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#ECF0F1" BorderThickness="0,0,0,1" Padding="8" Background="White">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" 
+                                                   TextWrapping="Wrap" Foreground="#2C3E50" FontSize="12"/>
+                                        <TextBlock Text="{Binding Director}" Foreground="#7F8C8D" FontSize="11" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Phone}" Foreground="#7F8C8D" FontSize="11"/>
+                                        <TextBlock Text="{Binding Address}" Foreground="Gray" FontSize="10" TextWrapping="Wrap"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,0,0">
+                                            <TextBlock Text="Рейтинг: " Foreground="#95A5A6" FontSize="10"/>
+                                            <TextBlock Text="{Binding Rating}" Foreground="#3498DB" FontWeight="Bold" FontSize="10"/>
+                                            <TextBlock Text=" | Скидка: " Foreground="#95A5A6" FontSize="10"/>
+                                            <TextBlock Text="{Binding Discount}" Foreground="#27AE60" FontWeight="Bold" FontSize="10"/>
+                                            <TextBlock Text="%" Foreground="#95A5A6" FontSize="10"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu Background="White" BorderBrush="#34495E">
+                                <MenuItem Header="Добавить партнера" Click="AddPartnerMenuItem_Click" Foreground="#2C3E50"/>
+                                <MenuItem Header="Редактировать партнера" Click="EditPartnerMenuItem_Click" Foreground="#2C3E50"/>
+                                <MenuItem Header="Удалить партнера" Click="DeletePartnerMenuItem_Click" Foreground="#2C3E50"/>
+                                <Separator Background="#ECF0F1"/>
+                                <MenuItem Header="Добавить продажу" Click="AddSaleMenuItem_Click" Foreground="#2C3E50"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- Разделитель -->
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" 
+                         Background="#BDC3C7" Width="3" ResizeBehavior="PreviousAndNext"/>
+
+            <!-- Правая панель - список продаж (серо-голубой стиль) -->
+            <Border Grid.Column="2" BorderBrush="#34495E" BorderThickness="1" CornerRadius="5" Background="White">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#34495E" CornerRadius="5,5,0,0" Padding="5">
+                        <TextBlock Text="ИСТОРИЯ РЕАЛИЗАЦИИ ПРОДУКЦИИ" FontWeight="Bold" FontSize="14" 
+                                   HorizontalAlignment="Center" Foreground="White"/>
+                    </Border>
+                    <DataGrid x:Name="SalesDataGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                              Margin="8" HeadersVisibility="Column" SelectionMode="Single"
+                              SelectionUnit="FullRow" BorderBrush="#ECF0F1"
+                              MouseDoubleClick="SalesDataGrid_MouseDoubleClick"
+                              Background="White" RowBackground="White" AlternatingRowBackground="#F8F9F9"
+                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#ECF0F1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование продукции" 
+                                                Binding="{Binding ProductName}" Width="*"
+                                                HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                                ElementStyle="{StaticResource DataGridCellStyle}"/>
+                            <DataGridTextColumn Header="Количество" 
+                                                Binding="{Binding Quantity}" Width="100"
+                                                HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                                ElementStyle="{StaticResource DataGridCellStyleRight}"/>
+                            <DataGridTextColumn Header="Дата продажи" 
+                                                Binding="{Binding SaleDate, StringFormat={}{0:dd.MM.yyyy}}" 
+                                                Width="120"
+                                                HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                                ElementStyle="{StaticResource DataGridCellStyleCenter}"/>
+                            <DataGridTextColumn Header="Сумма" 
+                                                Binding="{Binding TotalAmount, StringFormat={}{0:N0} ₽}" 
+                                                Width="120"
+                                                HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                                ElementStyle="{StaticResource DataGridCellStyleRight}"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Height" Value="28"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#EBF5FB"/>
+                                        <Setter Property="BorderBrush" Value="#3498DB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu Background="White" BorderBrush="#34495E">
+                                <MenuItem Header="Добавить продажу" Click="AddSaleMenuItem_Click" Foreground="#2C3E50"/>
+                                <Separator Background="#ECF0F1"/>
+                                <MenuItem Header="Редактировать продажу" Click="EditSaleMenuItem_Click" Foreground="#2C3E50"/>
+                                <MenuItem Header="Удалить продажу" Click="DeleteSaleMenuItem_Click" Foreground="#2C3E50"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
